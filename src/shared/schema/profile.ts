@@ -1,10 +1,6 @@
 import { z } from 'zod';
 import { idSchema, baseEntitySchema } from './common';
-
-// temporary until src/shared/util/id exists (replaced by later task)
-function uuidv4(): string {
-  return crypto.randomUUID();
-}
+import { uuidv4 } from '@/shared/util/id';
 
 export const locationSchema = z.object({
   city: z.string(),
