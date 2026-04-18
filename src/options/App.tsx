@@ -1,5 +1,6 @@
 import { useRoute, type Route } from './router';
 import { ProfileEditor } from '@/features/profile/ui/ProfileEditor';
+import { ApplicationsView } from './views/ApplicationsView';
 
 const NAV: { key: Route; label: string }[] = [
   { key: 'profile', label: 'Profile' },
@@ -29,8 +30,8 @@ export function App() {
       </aside>
       <main className="flex-1 p-6 overflow-auto">
         {route === 'profile' && <ProfileEditor />}
-        {route === 'applications' && <div>Applications (Task 32)</div>}
-        {route === 'settings' && <div>Settings (Task 33)</div>}
+        {route === 'applications' && <ApplicationsView />}
+        {route === 'settings' && <div>Settings (Task 39)</div>}
       </main>
     </div>
   );
