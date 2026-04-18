@@ -69,7 +69,7 @@ export function CopyPanel({ profile }: CopyPanelProps) {
     try {
       await navigator.clipboard.writeText(field.value);
       setCopiedKey(field.key);
-      setTimeout(() => setCopiedKey(null), 1500);
+      setTimeout(() => setCopiedKey((k) => (k === field.key ? null : k)), 1500);
     } catch {
       // clipboard denied — no visible feedback
     }
@@ -78,6 +78,8 @@ export function CopyPanel({ profile }: CopyPanelProps) {
   return (
     <div className="border-t border-slate-200 dark:border-slate-800 pt-2">
       <button
+        type="button"
+        aria-expanded={open}
         className="w-full flex items-center justify-between text-sm text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white py-1"
         onClick={() => setOpen((o) => !o)}
       >
@@ -94,7 +96,7 @@ export function CopyPanel({ profile }: CopyPanelProps) {
                 key={field.key}
                 className={`flex items-center gap-1 px-1.5 py-1 rounded text-xs transition-colors ${
                   copied
-                    ? 'bg-green-950 dark:bg-green-950'
+                    ? 'bg-green-100 dark:bg-green-950'
                     : 'hover:bg-slate-100 dark:hover:bg-slate-800'
                 }`}
               >
@@ -105,6 +107,8 @@ export function CopyPanel({ profile }: CopyPanelProps) {
                   {field.value}
                 </span>
                 <button
+                  type="button"
+                  aria-label={copied ? `Copied ${field.label}` : `Copy ${field.label}`}
                   onClick={() => void copy(field)}
                   className={`shrink-0 px-1.5 py-0.5 rounded text-[10px] transition-colors ${
                     copied
