@@ -4,7 +4,7 @@ import type { FieldMapping } from '@/features/autofill';
 
 interface PreviewProps {
   mappings: FieldMapping[];
-  onConfirm: (selectedKeys: Set<string>) => void;
+  onConfirm: (selectedIndexes: Set<number>) => void;
   onCancel: () => void;
 }
 
@@ -13,15 +13,15 @@ function PreviewDialog({ mappings, onConfirm, onCancel }: PreviewProps) {
     () => mappings.filter((m) => m.key !== 'unknown' && m.value),
     [mappings],
   );
-  const [selected, setSelected] = useState<Set<string>>(
-    new Set(fillable.map((m) => m.key)),
+  const [selected, setSelected] = useState<Set<number>>(
+    new Set(fillable.map((m) => m.candidateIndex)),
   );
 
-  const toggle = (k: string) =>
+  const toggle = (idx: number) =>
     setSelected((prev) => {
       const next = new Set(prev);
-      if (next.has(k)) next.delete(k);
-      else next.add(k);
+      if (next.has(idx)) next.delete(idx);
+      else next.add(idx);
       return next;
     });
 
@@ -31,11 +31,11 @@ function PreviewDialog({ mappings, onConfirm, onCancel }: PreviewProps) {
         <h2>Autofill preview ({fillable.length})</h2>
         {fillable.length === 0 && <p>No fillable fields matched your profile.</p>}
         {fillable.map((m) => (
-          <div key={m.key} className="rb-preview-row">
+          <div key={m.candidateIndex} className="rb-preview-row">
             <input
               type="checkbox"
-              checked={selected.has(m.key)}
-              onChange={() => toggle(m.key)}
+              checked={selected.has(m.candidateIndex)}
+              onChange={() => toggle(m.candidateIndex)}
             />
             <div className="rb-preview-key">{m.key}</div>
             <div className="rb-preview-value">{m.value}</div>
@@ -64,7 +64,7 @@ let container: HTMLDivElement | null = null;
 
 export function openPreview(
   mappings: FieldMapping[],
-  onConfirm: (keys: Set<string>) => void,
+  onConfirm: (selectedIndexes: Set<number>) => void,
 ): void {
   close();
   container = document.createElement('div');

@@ -48,7 +48,12 @@ describe('autofill engine', () => {
 
   it('applyFill fills only the selected keys and returns counts', () => {
     const mappings = buildMappings(document.body, sampleProfile);
-    const result = applyFill(document.body, mappings, new Set(['email', 'firstName']));
+    const selectedIndexes = new Set(
+      mappings
+        .filter((m) => m.key === 'email' || m.key === 'firstName')
+        .map((m) => m.candidateIndex),
+    );
+    const result = applyFill(document.body, mappings, selectedIndexes);
     expect(result.filled).toBe(2);
     expect((document.querySelector('input[name=email]') as HTMLInputElement).value).toBe(
       'tanay@example.com',

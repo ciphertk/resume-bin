@@ -44,14 +44,14 @@ export function buildMappings(
 export function applyFill(
   root: ParentNode,
   mappings: FieldMapping[],
-  selectedKeys: Set<string>,
+  selectedIndexes: Set<number>,
 ): FillResult {
   const candidates = discover(root);
   let filled = 0;
   let skipped = 0;
   let failed = 0;
   for (const m of mappings) {
-    if (m.key === 'unknown' || !selectedKeys.has(m.key)) {
+    if (m.key === 'unknown' || !selectedIndexes.has(m.candidateIndex)) {
       skipped++;
       continue;
     }
