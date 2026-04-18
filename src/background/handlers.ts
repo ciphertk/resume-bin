@@ -17,4 +17,14 @@ export function registerAllHandlers(): void {
   registerHandler('profile/update', async ({ patch }) => {
     return updateActiveProfile(patch);
   });
+
+  registerHandler('tracker/mark-applied', async ({ tabInfo }) => {
+    const { markApplied } = await import('@/features/tracker');
+    return markApplied(tabInfo);
+  });
+
+  registerHandler('tracker/list', async () => {
+    const { listApplications } = await import('@/features/tracker');
+    return listApplications();
+  });
 }
