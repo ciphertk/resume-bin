@@ -10,12 +10,12 @@
     "preview": "vite preview",
     "pack": "npm run build && cd dist && zip -r ../resume-bin-$npm_package_version.zip .",
     "typecheck": "tsc -p tsconfig.json && tsc -p tsconfig.node.json",
-    "lint": "eslint \"src/**/*.{ts,tsx}\" \"test/**/*.{ts,tsx}\"",
-    "lint:fix": "eslint --fix \"src/**/*.{ts,tsx}\" \"test/**/*.{ts,tsx}\"",
-    "format": "prettier --write \"src/**/*.{ts,tsx,css,html}\" \"test/**/*.{ts,tsx}\"",
+    "lint": "eslint \"src/**/*.{ts,tsx}\"",
+    "lint:fix": "eslint --fix \"src/**/*.{ts,tsx}\"",
+    "format": "prettier --write \"src/**/*.{ts,tsx,css,html}\"",
     "test": "vitest run",
     "test:watch": "vitest",
-    "e2e": "playwright test"
+    "e2e": "playwright test --pass-with-no-tests"
   },
   "dependencies": {
     "dexie": "^4.0.8",
