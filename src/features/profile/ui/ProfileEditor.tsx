@@ -4,6 +4,7 @@ import { PersonalSection } from './PersonalSection';
 import { LinksSection } from './LinksSection';
 import { PreferencesSection } from './PreferencesSection';
 import { SummarySection } from './SummarySection';
+import { SkillsSection } from './SkillsSection';
 
 const TABS = [
   { key: 'personal', label: 'Personal' },
@@ -44,7 +45,7 @@ export function ProfileEditor() {
       {tab === 'links' && <LinksSection profile={profile} save={save} />}
       {tab === 'prefs' && <PreferencesSection profile={profile} save={save} />}
       {tab === 'summary' && <SummarySection profile={profile} save={save} />}
-      {tab === 'skills' && <div className="text-slate-500">(Task 24)</div>}
+      {tab === 'skills' && <SkillsSection profile={profile} save={save} />}
     </div>
   );
 }
