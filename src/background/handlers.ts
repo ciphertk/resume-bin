@@ -1,4 +1,5 @@
 import { registerHandler } from '@/shared/messaging';
+import { ensureDefaultProfile, getActiveProfile, updateActiveProfile } from '@/features/profile';
 
 export function registerAllHandlers(): void {
   registerHandler('system/active-tab-info', async () => {
@@ -6,5 +7,14 @@ export function registerAllHandlers(): void {
     if (!tab?.url) return null;
     const u = new URL(tab.url);
     return { url: tab.url, title: tab.title ?? '', host: u.host };
+  });
+
+  registerHandler('profile/get-active', async () => {
+    await ensureDefaultProfile();
+    return getActiveProfile();
+  });
+
+  registerHandler('profile/update', async ({ patch }) => {
+    return updateActiveProfile(patch);
   });
 }
