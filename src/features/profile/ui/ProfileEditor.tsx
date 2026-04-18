@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useProfileForm } from '../useProfileForm';
 import { PersonalSection } from './PersonalSection';
 import { LinksSection } from './LinksSection';
+import { PreferencesSection } from './PreferencesSection';
 
 const TABS = [
   { key: 'personal', label: 'Personal' },
@@ -40,7 +41,7 @@ export function ProfileEditor() {
       </nav>
       {tab === 'personal' && <PersonalSection profile={profile} save={save} />}
       {tab === 'links' && <LinksSection profile={profile} save={save} />}
-      {tab === 'prefs' && <div className="text-slate-500">(Task 22)</div>}
+      {tab === 'prefs' && <PreferencesSection profile={profile} save={save} />}
       {tab === 'summary' && <div className="text-slate-500">(Task 23)</div>}
       {tab === 'skills' && <div className="text-slate-500">(Task 24)</div>}
     </div>
