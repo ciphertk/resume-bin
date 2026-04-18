@@ -27,4 +27,10 @@ export function registerAllHandlers(): void {
     const { listApplications } = await import('@/features/tracker');
     return listApplications();
   });
+
+  registerHandler('tracker/export-csv', async () => {
+    const { listApplications, toCsv } = await import('@/features/tracker');
+    const records = await listApplications();
+    return { csv: toCsv(records) };
+  });
 }
