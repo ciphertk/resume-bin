@@ -3,6 +3,7 @@ import { useProfileForm } from '../useProfileForm';
 import { PersonalSection } from './PersonalSection';
 import { LinksSection } from './LinksSection';
 import { PreferencesSection } from './PreferencesSection';
+import { SummarySection } from './SummarySection';
 
 const TABS = [
   { key: 'personal', label: 'Personal' },
@@ -42,7 +43,7 @@ export function ProfileEditor() {
       {tab === 'personal' && <PersonalSection profile={profile} save={save} />}
       {tab === 'links' && <LinksSection profile={profile} save={save} />}
       {tab === 'prefs' && <PreferencesSection profile={profile} save={save} />}
-      {tab === 'summary' && <div className="text-slate-500">(Task 23)</div>}
+      {tab === 'summary' && <SummarySection profile={profile} save={save} />}
       {tab === 'skills' && <div className="text-slate-500">(Task 24)</div>}
     </div>
   );
