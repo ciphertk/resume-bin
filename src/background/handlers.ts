@@ -33,4 +33,20 @@ export function registerAllHandlers(): void {
     const records = await listApplications();
     return { csv: toCsv(records) };
   });
+
+  registerHandler('settings/get', async () => {
+    const { getSettings } = await import('@/features/settings');
+    return getSettings();
+  });
+
+  registerHandler('settings/update', async ({ patch }) => {
+    const { updateSettings } = await import('@/features/settings');
+    return updateSettings(patch);
+  });
+
+  registerHandler('system/clear-all', async () => {
+    const { db } = await import('@/shared/storage/db');
+    await Promise.all(db.tables.map((t) => t.clear()));
+    return { ok: true as const };
+  });
 }
