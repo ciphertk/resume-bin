@@ -1,5 +1,8 @@
 import { registerHandler } from '@/shared/messaging';
 import { ensureDefaultProfile, getActiveProfile, updateActiveProfile } from '@/features/profile';
+import { markApplied, listApplications, toCsv } from '@/features/tracker';
+import { getSettings, updateSettings } from '@/features/settings';
+import { db } from '@/shared/storage/db';
 
 export function registerAllHandlers(): void {
   registerHandler('system/active-tab-info', async () => {
@@ -19,33 +22,27 @@ export function registerAllHandlers(): void {
   });
 
   registerHandler('tracker/mark-applied', async ({ tabInfo }) => {
-    const { markApplied } = await import('@/features/tracker');
     return markApplied(tabInfo);
   });
 
   registerHandler('tracker/list', async () => {
-    const { listApplications } = await import('@/features/tracker');
     return listApplications();
   });
 
   registerHandler('tracker/export-csv', async () => {
-    const { listApplications, toCsv } = await import('@/features/tracker');
     const records = await listApplications();
     return { csv: toCsv(records) };
   });
 
   registerHandler('settings/get', async () => {
-    const { getSettings } = await import('@/features/settings');
     return getSettings();
   });
 
   registerHandler('settings/update', async ({ patch }) => {
-    const { updateSettings } = await import('@/features/settings');
     return updateSettings(patch);
   });
 
   registerHandler('system/clear-all', async () => {
-    const { db } = await import('@/shared/storage/db');
     await Promise.all(db.tables.map((t) => t.clear()));
     return { ok: true as const };
   });
