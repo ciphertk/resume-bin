@@ -4,7 +4,7 @@ import { getDictionary } from './dictionary';
 const CONFIDENCE_THRESHOLD = 40;
 
 function normalize(s: string): string {
-  return s.toLowerCase().replace(/[_\-]+/g, ' ').replace(/\s+/g, ' ').trim();
+  return s.toLowerCase().replace(/[_-]+/g, ' ').replace(/\s+/g, ' ').trim();
 }
 
 function scoreCandidate(candidate: FieldCandidate, entry: DictionaryEntry): number {

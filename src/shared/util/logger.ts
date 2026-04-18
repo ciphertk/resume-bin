@@ -3,6 +3,7 @@ type Level = 'debug' | 'info' | 'warn' | 'error';
 const PREFIX = '[resume-bin]';
 
 function emit(level: Level, scope: string, args: unknown[]): void {
+  // eslint-disable-next-line no-console
   const fn = level === 'debug' ? console.log : console[level];
   fn.call(console, PREFIX, `[${scope}]`, ...args);
 }
