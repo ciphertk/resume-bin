@@ -1,8 +1,11 @@
 import { useEffect, useState } from 'react';
 import { sendMessage, type TabInfo } from '@/shared/messaging';
+import type { Profile } from '@/shared/schema/profile';
+import { CopyPanel } from './CopyPanel';
 
 export function App() {
   const [tab, setTab] = useState<TabInfo | null>(null);
+  const [profile, setProfile] = useState<Profile | null>(null);
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [appliedOk, setAppliedOk] = useState<boolean>(false);
@@ -11,6 +14,9 @@ export function App() {
     sendMessage('system/active-tab-info', undefined as never)
       .then(setTab)
       .catch(() => setTab(null));
+    sendMessage('profile/get-active', undefined as never)
+      .then(setProfile)
+      .catch(() => setProfile(null));
   }, []);
 
   const fill = async (): Promise<void> => {
@@ -74,6 +80,7 @@ export function App() {
         </button>
       </div>
       {message && <p className="text-xs text-red-600">{message}</p>}
+      {profile && <CopyPanel profile={profile} />}
     </div>
   );
 }
