@@ -36,3 +36,11 @@ test-results/
 
 # vite cache
 .vite/
+
+# typescript incremental build
+*.tsbuildinfo
+.ts-build/
+
+# local tooling
+.claude/
+.superpowers/
