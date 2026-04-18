@@ -1,35 +1,24 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { registerHandler, sendMessage, _resetHandlers } from './bus';
 
-type ChromeMock = {
+const mockChrome = {
   runtime: {
-    sendMessage: ReturnType<typeof vi.fn>;
+    sendMessage: vi.fn((msg: { type: string }, cb?: (reply: unknown) => void) => {
+      queueMicrotask(() => cb?.({ ok: true, value: 'echo:' + msg.type }));
+    }),
     onMessage: {
-      addListener: ReturnType<typeof vi.fn>;
-      removeListener: ReturnType<typeof vi.fn>;
-    };
-    lastError?: { message: string };
-  };
+      addListener: vi.fn(),
+      removeListener: vi.fn(),
+    },
+    lastError: undefined as { message: string } | undefined,
+  },
 };
-
-declare global {
-  // eslint-disable-next-line no-var
-  var chrome: ChromeMock;
-}
 
 beforeEach(() => {
   _resetHandlers();
-  globalThis.chrome = {
-    runtime: {
-      sendMessage: vi.fn((msg, cb) => {
-        queueMicrotask(() => cb?.({ ok: true, value: 'echo:' + (msg as { type: string }).type }));
-      }),
-      onMessage: {
-        addListener: vi.fn(),
-        removeListener: vi.fn(),
-      },
-    },
-  };
+  mockChrome.runtime.sendMessage.mockClear();
+  mockChrome.runtime.onMessage.addListener.mockClear();
+  (globalThis as Record<string, unknown>)['chrome'] = mockChrome;
 });
 
 describe('messaging bus', () => {
@@ -41,8 +30,6 @@ describe('messaging bus', () => {
   it('registerHandler stores and dispatches handlers', async () => {
     const handler = vi.fn(async () => ({ url: 'u', title: 't', host: 'h' }));
     registerHandler('system/active-tab-info', handler);
-    // Simulate runtime dispatch (what background.ts will wire up)
-    // The unit test just verifies registration side effect:
     expect(handler).not.toHaveBeenCalled();
   });
 });

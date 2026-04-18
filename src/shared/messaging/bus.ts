@@ -8,7 +8,7 @@ type Handler<T extends MessageType> = (
 const handlers = new Map<MessageType, Handler<MessageType>>();
 
 export function registerHandler<T extends MessageType>(type: T, handler: Handler<T>): void {
-  handlers.set(type, handler as Handler<MessageType>);
+  handlers.set(type, handler as unknown as Handler<MessageType>);
 }
 
 export function _resetHandlers(): void {
