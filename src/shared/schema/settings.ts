@@ -9,13 +9,15 @@ export const settingsSchema = z.object({
   passiveAnswerCapture: z.boolean(),
   captureJdSnapshot: z.boolean(),
   theme: z.enum(['light', 'dark', 'system']),
+  ignoredApplyPatterns: z.array(z.string()).default([]),
 });
 
 export type Settings = z.infer<typeof settingsSchema>;
 
 export const DEFAULT_SETTINGS: Settings = {
-  applyDetectionMode: 'manual-only',
+  applyDetectionMode: 'auto-confirm',
   passiveAnswerCapture: true,
   captureJdSnapshot: true,
   theme: 'system',
+  ignoredApplyPatterns: [],
 };

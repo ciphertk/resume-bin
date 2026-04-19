@@ -42,6 +42,9 @@ export class ResumeBinDb extends Dexie {
       files: 'id',
       kv: 'key',
     });
+    this.version(2).stores({
+      applications: 'id, url, appliedAt, companyName, status, source',
+    });
   }
 }
 

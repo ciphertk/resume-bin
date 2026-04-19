@@ -44,3 +44,6 @@ test-results/
 # local tooling
 .claude/
 .superpowers/
+
+# git worktrees
+.worktrees/

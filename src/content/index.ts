@@ -5,11 +5,16 @@ import { buildMappings, applyFill, type FieldMapping } from '@/features/autofill
 import { sendMessage } from '@/shared/messaging';
 import { mountPill } from './pill';
 import { openPreview } from './preview';
+import { openApplyBanner } from './applyBanner';
+import { mountApplyDetector } from '@/features/tracker/applyDetector';
+import { parseJobMeta } from '@/features/tracker/parseJobMeta';
+import { findAdapter } from '@/features/autofill/adapters/index';
 import type { Profile } from '@/shared/schema/profile';
 
 const log = createLogger('content');
 let currentProfile: Profile | null = null;
 let currentMappings: FieldMapping[] = [];
+let detectorCleanup: (() => void) | null = null;
 
 const pill = mountPill({
   onClick: () => {
@@ -20,6 +25,39 @@ const pill = mountPill({
     }, currentProfile);
   },
 });
+
+async function mountDetector(): Promise<void> {
+  detectorCleanup?.();
+  const settings = await sendMessage('settings/get', undefined as never);
+  if (settings.applyDetectionMode === 'off') return;
+
+  detectorCleanup = mountApplyDetector({
+    ignoredPatterns: settings.ignoredApplyPatterns ?? [],
+    parseMetaFn: (doc) => {
+      const adapter = findAdapter(location.href);
+      return parseJobMeta(doc, adapter);
+    },
+    onDetected: (meta) => {
+      openApplyBanner(
+        meta,
+        // onConfirm — log it
+        () => {
+          void sendMessage('tracker/auto-apply', {
+            url: location.href,
+            title: document.title,
+            meta,
+          });
+        },
+        // onIgnore — add hostname to ignore list
+        () => {
+          void sendMessage('settings/add-ignore-pattern', {
+            pattern: location.hostname,
+          });
+        },
+      );
+    },
+  });
+}
 
 async function refresh(): Promise<void> {
   if (!currentProfile) {
@@ -36,8 +74,14 @@ async function refresh(): Promise<void> {
 
 const refreshDebounced = debounce(refresh, 300);
 
-document.addEventListener('DOMContentLoaded', () => void refresh());
-if (document.readyState !== 'loading') void refresh();
+document.addEventListener('DOMContentLoaded', () => {
+  void refresh();
+  void mountDetector();
+});
+if (document.readyState !== 'loading') {
+  void refresh();
+  void mountDetector();
+}
 
 const observer = new MutationObserver(() => refreshDebounced());
 observer.observe(document.documentElement, { childList: true, subtree: true });

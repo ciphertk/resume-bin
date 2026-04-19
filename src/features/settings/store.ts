@@ -17,3 +17,17 @@ export async function updateSettings(patch: Partial<Settings>): Promise<Settings
   await db.kv.put({ key: KEY, value: parsed });
   return parsed;
 }
+
+export async function addIgnorePattern(pattern: string): Promise<Settings> {
+  const current = await getSettings();
+  const patterns = current.ignoredApplyPatterns ?? [];
+  if (patterns.includes(pattern)) return current;
+  return updateSettings({ ignoredApplyPatterns: [...patterns, pattern] });
+}
+
+export async function removeIgnorePattern(pattern: string): Promise<Settings> {
+  const current = await getSettings();
+  return updateSettings({
+    ignoredApplyPatterns: (current.ignoredApplyPatterns ?? []).filter((p) => p !== pattern),
+  });
+}

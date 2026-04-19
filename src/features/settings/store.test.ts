@@ -14,7 +14,7 @@ describe('settings store', () => {
   it('getSettings returns defaults when nothing stored', async () => {
     const s = await getSettings();
     expect(s.theme).toBe('system');
-    expect(s.applyDetectionMode).toBe('manual-only');
+    expect(s.applyDetectionMode).toBe('auto-confirm');
   });
 
   it('updateSettings merges and persists', async () => {

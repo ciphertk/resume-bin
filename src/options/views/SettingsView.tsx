@@ -118,6 +118,45 @@ export function SettingsView() {
         </div>
       </section>
 
+      {/* Ignored sites */}
+      <section className="rounded-2xl border border-rb-border bg-rb-surface p-5 space-y-4">
+        <div className="flex items-center gap-3">
+          <span
+            className="text-[10px] font-mono uppercase tracking-widest px-2.5 py-1 rounded-full border"
+            style={{ color: 'hsl(var(--rb-accent-ink))', background: 'hsl(var(--rb-accent-soft))', borderColor: 'hsl(22.3 80% 88%)' }}
+          >
+            detection
+          </span>
+          <span className="font-semibold text-sm text-rb-text">Ignored sites</span>
+        </div>
+        <p className="text-xs text-rb-muted m-0">
+          Sites where the &quot;Applied?&quot; banner will never appear. Patterns are matched against the page URL.
+        </p>
+        {(settings.ignoredApplyPatterns ?? []).length === 0 ? (
+          <p className="text-xs text-rb-dim italic">No ignored sites yet. Use the &quot;Not a job app&quot; button on any page to add one.</p>
+        ) : (
+          <ul className="space-y-2 m-0 p-0 list-none">
+            {(settings.ignoredApplyPatterns ?? []).map((pattern) => (
+              <li key={pattern} className="flex items-center justify-between gap-2 rounded-lg border border-rb-border px-3 py-2" style={{ background: 'hsl(var(--rb-surface2))' }}>
+                <span className="text-xs font-mono text-rb-text truncate">{pattern}</span>
+                <button
+                  onClick={async () => {
+                    const s = await sendMessage('settings/update', {
+                      patch: { ignoredApplyPatterns: (settings.ignoredApplyPatterns ?? []).filter((p) => p !== pattern) },
+                    });
+                    setSettings(s);
+                  }}
+                  className="shrink-0 text-rb-muted hover:text-red-500 transition-colors border-none bg-transparent cursor-pointer p-1"
+                  aria-label={`Remove ${pattern}`}
+                >
+                  <Icon name="x" size={12} />
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+
       {/* Danger zone */}
       <section
         className="rounded-2xl p-5"
