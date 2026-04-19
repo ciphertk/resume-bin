@@ -1,5 +1,6 @@
 import { db } from '@/shared/storage/db';
 import type { Variant } from '@/shared/schema/variant';
+import { variantSchema } from '@/shared/schema/variant';
 
 export async function listVariants(): Promise<Variant[]> {
   const all = await db.variants.toArray();
@@ -7,7 +8,7 @@ export async function listVariants(): Promise<Variant[]> {
 }
 
 export async function saveVariant(variant: Variant): Promise<Variant> {
-  const record = { ...variant, updatedAt: Date.now() };
+  const record = variantSchema.parse({ ...variant, updatedAt: Date.now() });
   await db.variants.put(record);
   return record;
 }

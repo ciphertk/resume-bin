@@ -6,7 +6,7 @@ import type { Variant } from '@/shared/schema/variant';
 
 const makeVariant = (over: Partial<Variant> = {}): Variant => ({
   id: crypto.randomUUID(),
-  baseProfileId: 'base-1',
+  baseProfileId: crypto.randomUUID(),
   name: 'Test',
   priority: 1,
   matchRules: {},
@@ -25,19 +25,19 @@ describe('variant store', () => {
   });
 
   it('saveVariant persists and listVariants returns sorted by priority', async () => {
-    const v2 = makeVariant({ id: 'v2', name: 'B', priority: 2 });
-    const v1 = makeVariant({ id: 'v1', name: 'A', priority: 1 });
+    const v2 = makeVariant({ name: 'B', priority: 2 });
+    const v1 = makeVariant({ name: 'A', priority: 1 });
     await saveVariant(v2);
     await saveVariant(v1);
     const list = await listVariants();
-    expect(list[0].id).toBe('v1');
-    expect(list[1].id).toBe('v2');
+    expect(list[0].name).toBe('A');
+    expect(list[1].name).toBe('B');
   });
 
   it('deleteVariant removes the record', async () => {
-    const v = makeVariant({ id: 'del' });
+    const v = makeVariant();
     await saveVariant(v);
-    await deleteVariant('del');
+    await deleteVariant(v.id);
     expect(await listVariants()).toHaveLength(0);
   });
 
@@ -68,12 +68,12 @@ describe('variant store', () => {
   });
 
   it('higher priority (lower number) variant wins over lower priority', async () => {
-    const vHigh = makeVariant({ id: 'high', priority: 1, matchRules: { sites: ['jobs.com'] } });
-    const vLow  = makeVariant({ id: 'low',  priority: 2, matchRules: { sites: ['jobs.com'] } });
+    const vHigh = makeVariant({ priority: 1, matchRules: { sites: ['jobs.com'] } });
+    const vLow  = makeVariant({ priority: 2, matchRules: { sites: ['jobs.com'] } });
     await saveVariant(vLow);
     await saveVariant(vHigh);
     const result = await resolveVariantForContext('https://jobs.com/apply');
-    expect(result?.id).toBe('high');
+    expect(result?.id).toBe(vHigh.id);
   });
 
   it('returns null when no patterns match', async () => {
