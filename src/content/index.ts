@@ -10,10 +10,12 @@ import { mountApplyDetector } from '@/features/tracker/applyDetector';
 import { parseJobMeta } from '@/features/tracker/parseJobMeta';
 import { findAdapter } from '@/features/autofill/adapters/index';
 import type { Profile } from '@/shared/schema/profile';
+import type { Variant } from '@/shared/schema/variant';
 
 const log = createLogger('content');
 let currentProfile: Profile | null = null;
 let currentMappings: FieldMapping[] = [];
+let currentVariant: Variant | null = null;
 let detectorCleanup: (() => void) | null = null;
 
 const pill = mountPill({
@@ -38,9 +40,18 @@ async function mountDetector(): Promise<void> {
       return parseJobMeta(doc, adapter);
     },
     onDetected: (meta) => {
+      // Resolve variant using parsed job metadata, then re-run fill mapping
+      void sendMessage('variant/resolve', {
+        url: location.href,
+        jobTitle: meta.title,
+        jdText: meta.jdText,
+      }).then((v) => {
+        currentVariant = v;
+        void refresh();
+      });
+
       openApplyBanner(
         meta,
-        // onConfirm — log it
         () => {
           void sendMessage('tracker/auto-apply', {
             url: location.href,
@@ -48,7 +59,6 @@ async function mountDetector(): Promise<void> {
             meta,
           });
         },
-        // onIgnore — add hostname to ignore list
         () => {
           void sendMessage('settings/add-ignore-pattern', {
             pattern: location.hostname,
@@ -67,7 +77,7 @@ async function refresh(): Promise<void> {
     pill.setCount(0);
     return;
   }
-  currentMappings = buildMappings(document.body, currentProfile, location.href);
+  currentMappings = buildMappings(document.body, currentProfile, location.href, currentVariant);
   const fillable = currentMappings.filter((m) => m.key !== 'unknown' && m.value).length;
   pill.setCount(fillable);
 }

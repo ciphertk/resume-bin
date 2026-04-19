@@ -2,7 +2,9 @@ import { describe, it, expect, beforeEach } from 'vitest';
 import fs from 'node:fs';
 import path from 'node:path';
 import type { Profile } from '@/shared/schema/profile';
-import { buildMappings, applyFill } from './engine';
+import { buildMappings, applyFill, mergeProfileWithVariant } from './engine';
+import { createEmptyProfile } from '@/shared/schema/profile';
+import type { Variant } from '@/shared/schema/variant';
 
 const html = fs.readFileSync(
   path.resolve(__dirname, '../../../test/fixtures/fields/basic-form.html'),
@@ -62,5 +64,52 @@ describe('autofill engine', () => {
       'Tanay',
     );
     expect((document.querySelector('input[name=phone]') as HTMLInputElement).value).toBe('');
+  });
+});
+
+const baseProfile = createEmptyProfile('Base');
+const makeVariant = (overrides: Variant['overrides']): Variant => ({
+  id: crypto.randomUUID(),
+  baseProfileId: baseProfile.id,
+  name: 'Test',
+  priority: 1,
+  matchRules: {},
+  overrides,
+  createdAt: 0,
+  updatedAt: 0,
+});
+
+describe('mergeProfileWithVariant', () => {
+  it('returns base profile unchanged when variant is null', () => {
+    const result = mergeProfileWithVariant(baseProfile, null);
+    expect(result).toBe(baseProfile);
+  });
+
+  it('variant scalar override wins over base', () => {
+    const profile = { ...baseProfile, firstName: 'Alice' };
+    const variant = makeVariant({ firstName: 'Bob' });
+    const result = mergeProfileWithVariant(profile, variant);
+    expect(result.firstName).toBe('Bob');
+  });
+
+  it('base value used when variant does not override that field', () => {
+    const profile = { ...baseProfile, email: 'a@b.com', firstName: 'Alice' };
+    const variant = makeVariant({ firstName: 'Bob' });
+    const result = mergeProfileWithVariant(profile, variant);
+    expect(result.email).toBe('a@b.com');
+  });
+
+  it('variant skills array replaces base skills', () => {
+    const profile = { ...baseProfile, skills: ['JS', 'TS'] };
+    const variant = makeVariant({ skills: ['Python'] });
+    const result = mergeProfileWithVariant(profile, variant);
+    expect(result.skills).toEqual(['Python']);
+  });
+
+  it('base skills preserved when variant has no skills override', () => {
+    const profile = { ...baseProfile, skills: ['JS', 'TS'] };
+    const variant = makeVariant({ summary: 'New summary' });
+    const result = mergeProfileWithVariant(profile, variant);
+    expect(result.skills).toEqual(['JS', 'TS']);
   });
 });
