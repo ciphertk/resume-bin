@@ -1,4 +1,5 @@
 import type { Profile } from '@/shared/schema/profile';
+import type { Variant } from '@/shared/schema/variant';
 import type { FieldCandidate, FieldMapping, FillResult } from './types';
 import { discover } from './discover';
 import { identify } from './identify';
@@ -79,11 +80,18 @@ function resolveValue(key: string, profile: Profile): string | undefined {
   }
 }
 
+export function mergeProfileWithVariant(base: Profile, variant: Variant | null): Profile {
+  if (!variant) return base;
+  return { ...base, ...variant.overrides };
+}
+
 export function buildMappings(
   root: ParentNode,
   profile: Profile,
   url?: string,
+  variant?: Variant | null,
 ): FieldMapping[] {
+  const merged = mergeProfileWithVariant(profile, variant ?? null);
   let candidates: FieldCandidate[] = discover(root);
 
   if (url) {
@@ -96,7 +104,7 @@ export function buildMappings(
   const mappings = identify(candidates);
   for (const m of mappings) {
     if (m.key !== 'unknown') {
-      m.value = resolveValue(m.key, profile);
+      m.value = resolveValue(m.key, merged);
     }
   }
   return mappings;
