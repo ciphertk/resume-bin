@@ -1,1 +1,1 @@
-export { getSettings, updateSettings } from './store';
+export { getSettings, updateSettings, addIgnorePattern, removeIgnorePattern } from './store';

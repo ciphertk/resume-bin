@@ -1,6 +1,7 @@
 import type { Profile } from '@/shared/schema/profile';
 import type { ApplicationRecord } from '@/shared/schema/application';
 import type { Settings } from '@/shared/schema/settings';
+import type { JobMeta } from '@/features/tracker/parseJobMeta';
 
 // --- message envelope ---
 
@@ -22,11 +23,13 @@ export type Message =
   | MessageEnvelope<'autofill/fill', { selectedKeys: string[] }>
   // tracker
   | MessageEnvelope<'tracker/mark-applied', { url: string; tabInfo: TabInfo }>
+  | MessageEnvelope<'tracker/auto-apply', { url: string; title: string; meta: Partial<JobMeta> }>
   | MessageEnvelope<'tracker/list'>
   | MessageEnvelope<'tracker/export-csv'>
   // settings
   | MessageEnvelope<'settings/get'>
   | MessageEnvelope<'settings/update', { patch: Partial<Settings> }>
+  | MessageEnvelope<'settings/add-ignore-pattern', { pattern: string }>
   // system
   | MessageEnvelope<'system/clear-all'>
   | MessageEnvelope<'system/active-tab-info'>;
@@ -45,10 +48,12 @@ export interface ResponseMap {
   'autofill/request-mapping': { count: number };
   'autofill/fill': { filled: number; skipped: number; failed: number };
   'tracker/mark-applied': ApplicationRecord;
+  'tracker/auto-apply': ApplicationRecord;
   'tracker/list': ApplicationRecord[];
   'tracker/export-csv': { csv: string };
   'settings/get': Settings;
   'settings/update': Settings;
+  'settings/add-ignore-pattern': Settings;
   'system/clear-all': { ok: true };
   'system/active-tab-info': TabInfo | null;
 }

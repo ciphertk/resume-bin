@@ -1,7 +1,7 @@
 import { registerHandler } from '@/shared/messaging';
 import { ensureDefaultProfile, getActiveProfile, updateActiveProfile } from '@/features/profile';
-import { markApplied, listApplications, toCsv } from '@/features/tracker';
-import { getSettings, updateSettings } from '@/features/settings';
+import { markApplied, autoMarkApplied, listApplications, toCsv } from '@/features/tracker';
+import { getSettings, updateSettings, addIgnorePattern } from '@/features/settings';
 import { db } from '@/shared/storage/db';
 
 export function registerAllHandlers(): void {
@@ -40,6 +40,14 @@ export function registerAllHandlers(): void {
 
   registerHandler('settings/update', async ({ patch }) => {
     return updateSettings(patch);
+  });
+
+  registerHandler('settings/add-ignore-pattern', async ({ pattern }) => {
+    return addIgnorePattern(pattern);
+  });
+
+  registerHandler('tracker/auto-apply', async ({ url, title, meta }) => {
+    return autoMarkApplied(url, title, meta);
   });
 
   registerHandler('system/clear-all', async () => {

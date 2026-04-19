@@ -4,6 +4,7 @@ import type { ApplicationRecord } from '@/shared/schema/application';
 import { Icon } from '@/shared/ui/Icon';
 
 type Status = ApplicationRecord['status'];
+type SourceFilter = 'all' | 'manual' | 'auto';
 
 const STATUS_COLORS: Record<Status, { bg: string; fg: string }> = {
   draft:     { bg: 'hsl(220 14.29% 95.88%)', fg: 'hsl(220 8.94% 46.08%)' },
@@ -29,9 +30,42 @@ function StatusChip({ status }: { status: Status }) {
   );
 }
 
+function AutoBadge() {
+  return (
+    <span
+      className="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-mono font-bold uppercase tracking-widest ml-1.5"
+      style={{ background: 'hsl(var(--rb-accent-soft))', color: 'hsl(var(--rb-accent-ink))' }}
+    >
+      auto
+    </span>
+  );
+}
+
+function JdPreview({ text }: { text: string }) {
+  const [expanded, setExpanded] = useState(false);
+  const preview = text.slice(0, 300);
+  const hasMore = text.length > 300;
+  return (
+    <div className="text-xs text-rb-muted leading-relaxed mt-2 px-4 pb-3">
+      {expanded ? text : preview}
+      {hasMore && (
+        <button
+          onClick={() => setExpanded((e) => !e)}
+          className="ml-1 underline border-none bg-transparent cursor-pointer text-xs"
+          style={{ color: 'hsl(var(--rb-accent-ink))' }}
+        >
+          {expanded ? 'Show less' : 'Show more'}
+        </button>
+      )}
+    </div>
+  );
+}
+
 export function ApplicationsView() {
   const [rows, setRows] = useState<ApplicationRecord[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [filter, setFilter] = useState<SourceFilter>('all');
+  const [expanded, setExpanded] = useState<Set<string>>(new Set());
 
   const load = async (): Promise<void> => {
     try {
@@ -43,9 +77,20 @@ export function ApplicationsView() {
     }
   };
 
-  useEffect(() => {
-    void load();
-  }, []);
+  useEffect(() => { void load(); }, []);
+
+  const filtered = rows.filter((r) => {
+    if (filter === 'auto') return r.source === 'auto';
+    if (filter === 'manual') return r.source !== 'auto';
+    return true;
+  });
+
+  const toggleExpand = (id: string) =>
+    setExpanded((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id); else next.add(id);
+      return next;
+    });
 
   const exportCsv = async (): Promise<void> => {
     try {
@@ -62,14 +107,18 @@ export function ApplicationsView() {
     }
   };
 
+  const FILTERS: { key: SourceFilter; label: string }[] = [
+    { key: 'all', label: 'All' },
+    { key: 'manual', label: 'Manual' },
+    { key: 'auto', label: 'Auto-detected' },
+  ];
+
   return (
     <div className="space-y-6">
       {/* Page header */}
       <div className="flex items-end justify-between">
         <div>
-          <div className="text-[11px] font-mono text-rb-muted uppercase tracking-widest mb-2">
-            Applications
-          </div>
+          <div className="text-[11px] font-mono text-rb-muted uppercase tracking-widest mb-2">Applications</div>
           <h1 className="font-display text-5xl font-normal tracking-tight leading-tight text-rb-text m-0">
             Your <em className="italic" style={{ color: 'hsl(var(--rb-accent))' }}>tracker</em>
           </h1>
@@ -84,11 +133,34 @@ export function ApplicationsView() {
         </button>
       </div>
 
-      {error && (
-        <p className="text-xs text-red-500 font-mono">{error}</p>
+      {/* Source filter */}
+      {rows.length > 0 && (
+        <nav className="flex gap-0.5 p-1 rounded-xl w-fit" style={{ background: 'hsl(var(--rb-surface2))' }}>
+          {FILTERS.map((f) => (
+            <button
+              key={f.key}
+              onClick={() => setFilter(f.key)}
+              className="px-3.5 py-1.5 text-xs font-medium rounded-lg cursor-pointer border-none transition-all"
+              style={
+                filter === f.key
+                  ? { background: 'hsl(var(--rb-surface))', color: 'hsl(var(--rb-text))', boxShadow: '0 1px 3px hsl(0 0% 0% / 0.08)' }
+                  : { background: 'transparent', color: 'hsl(var(--rb-muted))' }
+              }
+            >
+              {f.label}
+              {f.key !== 'all' && (
+                <span className="ml-1.5 text-[10px] opacity-60">
+                  {rows.filter((r) => f.key === 'auto' ? r.source === 'auto' : r.source !== 'auto').length}
+                </span>
+              )}
+            </button>
+          ))}
+        </nav>
       )}
 
-      {rows.length === 0 ? (
+      {error && <p className="text-xs text-red-500 font-mono">{error}</p>}
+
+      {filtered.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-20 text-center">
           <div
             className="w-12 h-12 rounded-2xl flex items-center justify-center mb-4"
@@ -97,9 +169,9 @@ export function ApplicationsView() {
             <Icon name="briefcase" size={22} color="hsl(var(--rb-muted))" />
           </div>
           <p className="text-sm text-rb-muted max-w-xs leading-relaxed">
-            No applications tracked yet. Open a job page and click{' '}
-            <em className="font-medium text-rb-text">Mark this page as applied</em>{' '}
-            from the popup.
+            {rows.length === 0
+              ? 'No applications tracked yet. Open a job page and apply — the banner will ask if you want to log it.'
+              : `No ${filter} applications.`}
           </p>
         </div>
       ) : (
@@ -107,9 +179,9 @@ export function ApplicationsView() {
           <table className="w-full text-sm">
             <thead>
               <tr style={{ background: 'hsl(var(--rb-surface2))' }}>
-                {['Company', 'Title', 'Applied', 'Source', 'Status'].map((h) => (
+                {['Company', 'Title', 'Applied', 'Status', ''].map((h, i) => (
                   <th
-                    key={h}
+                    key={i}
                     className="py-2.5 px-4 text-left text-[10px] font-mono uppercase tracking-widest text-rb-muted border-b border-rb-border font-normal"
                   >
                     {h}
@@ -118,31 +190,52 @@ export function ApplicationsView() {
               </tr>
             </thead>
             <tbody>
-              {rows.map((r) => (
-                <tr
-                  key={r.id}
-                  className="border-b border-rb-border last:border-b-0 hover:bg-rb-surface2 transition-colors"
-                >
-                  <td className="py-3 px-4">
-                    <a
-                      className="font-medium hover:underline"
-                      style={{ color: 'hsl(var(--rb-accent-ink))' }}
-                      href={r.url}
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      {r.companyName}
-                    </a>
-                  </td>
-                  <td className="py-3 px-4 text-rb-text">{r.jobTitle}</td>
-                  <td className="py-3 px-4 text-rb-muted font-mono text-xs">
-                    {new Date(r.appliedAt).toISOString().slice(0, 10)}
-                  </td>
-                  <td className="py-3 px-4 text-rb-muted text-xs">{r.sourcePlatform}</td>
-                  <td className="py-3 px-4">
-                    <StatusChip status={r.status} />
-                  </td>
-                </tr>
+              {filtered.map((r) => (
+                <>
+                  <tr
+                    key={r.id}
+                    className="border-b border-rb-border last:border-b-0 hover:bg-rb-surface2 transition-colors"
+                  >
+                    <td className="py-3 px-4">
+                      <div className="flex items-center">
+                        <a
+                          className="font-medium hover:underline"
+                          style={{ color: 'hsl(var(--rb-accent-ink))' }}
+                          href={r.url}
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          {r.companyName}
+                        </a>
+                        {r.source === 'auto' && <AutoBadge />}
+                      </div>
+                    </td>
+                    <td className="py-3 px-4 text-rb-text">{r.jobTitle}</td>
+                    <td className="py-3 px-4 text-rb-muted font-mono text-xs">
+                      {new Date(r.appliedAt).toISOString().slice(0, 10)}
+                    </td>
+                    <td className="py-3 px-4">
+                      <StatusChip status={r.status} />
+                    </td>
+                    <td className="py-3 px-4">
+                      {r.jdText && (
+                        <button
+                          onClick={() => toggleExpand(r.id)}
+                          className="text-[11px] text-rb-muted hover:text-rb-text border-none bg-transparent cursor-pointer underline"
+                        >
+                          {expanded.has(r.id) ? 'Hide JD' : 'View JD'}
+                        </button>
+                      )}
+                    </td>
+                  </tr>
+                  {r.jdText && expanded.has(r.id) && (
+                    <tr key={`${r.id}-jd`} className="border-b border-rb-border bg-rb-surface2">
+                      <td colSpan={5}>
+                        <JdPreview text={r.jdText} />
+                      </td>
+                    </tr>
+                  )}
+                </>
               ))}
             </tbody>
           </table>

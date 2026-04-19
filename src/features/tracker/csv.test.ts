@@ -11,6 +11,7 @@ const rec = (over: Partial<ApplicationRecord> = {}): ApplicationRecord => ({
   sourcePlatform: 'x.com',
   profileId: 'p-1',
   status: 'applied',
+  source: 'manual',
   createdAt: 0,
   updatedAt: 0,
   ...over,

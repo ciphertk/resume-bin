@@ -28,6 +28,9 @@ export const applicationRecordSchema = baseEntitySchema.extend({
   followUpAt: timestampSchema.optional(),
   jdSnapshot: z.string().optional(),
   salaryRange: z.string().optional(),
+  source: z.enum(['manual', 'auto']).default('manual'),
+  jdText: z.string().optional(),
+  detectedAt: timestampSchema.optional(),
 });
 
 export type ApplicationRecord = z.infer<typeof applicationRecordSchema>;
