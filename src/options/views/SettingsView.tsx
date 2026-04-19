@@ -130,10 +130,10 @@ export function SettingsView() {
           <span className="font-semibold text-sm text-rb-text">Ignored sites</span>
         </div>
         <p className="text-xs text-rb-muted m-0">
-          Sites where the "Applied?" banner will never appear. Patterns are matched against the page URL.
+          Sites where the &quot;Applied?&quot; banner will never appear. Patterns are matched against the page URL.
         </p>
         {(settings.ignoredApplyPatterns ?? []).length === 0 ? (
-          <p className="text-xs text-rb-dim italic">No ignored sites yet. Use the "Not a job app" button on any page to add one.</p>
+          <p className="text-xs text-rb-dim italic">No ignored sites yet. Use the &quot;Not a job app&quot; button on any page to add one.</p>
         ) : (
           <ul className="space-y-2 m-0 p-0 list-none">
             {(settings.ignoredApplyPatterns ?? []).map((pattern) => (
