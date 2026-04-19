@@ -12,13 +12,12 @@ export function SkillsSection({
   const [draft, setDraft] = useState('');
 
   const addSkill = (): void => {
-    const v = draft.trim();
-    if (!v) return;
-    if (profile.skills.includes(v)) {
-      setDraft('');
-      return;
+    const parts = draft.split(',').map((s) => s.trim()).filter((s) => s.length > 0);
+    if (parts.length === 0) return;
+    const incoming = parts.filter((s) => !profile.skills.includes(s));
+    if (incoming.length > 0) {
+      void save({ skills: [...profile.skills, ...incoming] });
     }
-    void save({ skills: [...profile.skills, v] });
     setDraft('');
   };
 

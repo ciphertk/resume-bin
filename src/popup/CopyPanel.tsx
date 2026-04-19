@@ -42,6 +42,21 @@ export function buildCopyFields(profile: Profile): CopyField[] {
       value: profile.expectedCtcAnnual !== undefined ? String(profile.expectedCtcAnnual) : undefined,
     },
     {
+      key: 'currentCompany',
+      label: 'Company',
+      value: profile.workExperience[0]?.company,
+    },
+    {
+      key: 'currentTitle',
+      label: 'Title',
+      value: profile.workExperience[0]?.title,
+    },
+    {
+      key: 'latestDegree',
+      label: 'Degree',
+      value: profile.education[profile.education.length - 1]?.degree,
+    },
+    {
       key: 'skills',
       label: 'Skills',
       value: profile.skills.length > 0 ? profile.skills.join(', ') : undefined,

@@ -3,6 +3,7 @@ import { idSchema, baseEntitySchema } from './common';
 import { uuidv4 } from '@/shared/util/id';
 
 export const locationSchema = z.object({
+  address: z.string().optional(),
   city: z.string(),
   state: z.string(),
   country: z.string(),
@@ -82,6 +83,8 @@ export const profileSchema = baseEntitySchema.extend({
   coverLetterTemplate: z.string().optional(),
 });
 
+export type WorkExperience = z.infer<typeof workExperienceSchema>;
+export type Education = z.infer<typeof educationSchema>;
 export type Profile = z.infer<typeof profileSchema>;
 
 export function createEmptyProfile(name = 'Default'): Profile {

@@ -5,13 +5,19 @@ import { LinksSection } from './LinksSection';
 import { PreferencesSection } from './PreferencesSection';
 import { SummarySection } from './SummarySection';
 import { SkillsSection } from './SkillsSection';
+import { WorkExperienceSection } from './WorkExperienceSection';
+import { EducationSection } from './EducationSection';
+import { FilesSection } from './FilesSection';
 
 const TABS = [
   { key: 'personal', label: 'Personal' },
   { key: 'links', label: 'Links' },
+  { key: 'experience', label: 'Experience' },
+  { key: 'education', label: 'Education' },
   { key: 'prefs', label: 'Preferences' },
   { key: 'summary', label: 'Summary' },
   { key: 'skills', label: 'Skills' },
+  { key: 'files', label: 'Files' },
 ] as const;
 
 type TabKey = (typeof TABS)[number]['key'];
@@ -62,9 +68,12 @@ export function ProfileEditor() {
       <div>
         {tab === 'personal' && <PersonalSection profile={profile} save={save} />}
         {tab === 'links' && <LinksSection profile={profile} save={save} />}
+        {tab === 'experience' && <WorkExperienceSection profile={profile} save={save} />}
+        {tab === 'education' && <EducationSection profile={profile} save={save} />}
         {tab === 'prefs' && <PreferencesSection profile={profile} save={save} />}
         {tab === 'summary' && <SummarySection profile={profile} save={save} />}
         {tab === 'skills' && <SkillsSection profile={profile} save={save} />}
+        {tab === 'files' && <FilesSection profile={profile} save={save} />}
       </div>
     </div>
   );

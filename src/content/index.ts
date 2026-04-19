@@ -17,7 +17,7 @@ const pill = mountPill({
     openPreview(currentMappings, (keys) => {
       const result = applyFill(document.body, currentMappings, keys);
       log.info('fill result', result);
-    });
+    }, currentProfile);
   },
 });
 
@@ -29,7 +29,7 @@ async function refresh(): Promise<void> {
     pill.setCount(0);
     return;
   }
-  currentMappings = buildMappings(document.body, currentProfile);
+  currentMappings = buildMappings(document.body, currentProfile, location.href);
   const fillable = currentMappings.filter((m) => m.key !== 'unknown' && m.value).length;
   pill.setCount(fillable);
 }
@@ -48,7 +48,7 @@ chrome.runtime.onMessage.addListener((msg: { type: string }, _sender, sendRespon
       openPreview(currentMappings, (keys) => {
         const result = applyFill(document.body, currentMappings, keys);
         sendResponse({ ok: true, value: result });
-      });
+      }, currentProfile);
       return true;
     }
     sendResponse({ ok: false, error: 'no profile' });

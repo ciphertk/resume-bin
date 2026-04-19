@@ -34,6 +34,11 @@ export function PersonalSection({
           onCommit={(v) => save({ phone: v })}
         />
         <TextField
+          label="Address"
+          value={profile.location.address ?? ''}
+          onCommit={(v) => save({ location: { ...profile.location, address: v } })}
+        />
+        <TextField
           label="City"
           value={profile.location.city}
           onCommit={(v) => save({ location: { ...profile.location, city: v } })}
