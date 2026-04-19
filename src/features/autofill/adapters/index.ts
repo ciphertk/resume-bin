@@ -5,6 +5,7 @@ import { wellfoundAdapter } from './wellfound';
 import { greenhouseAdapter } from './greenhouse';
 import { leverAdapter } from './lever';
 import { workdayAdapter } from './workday';
+import { ashbyAdapter } from './ashby';
 
 export const ADAPTERS: SiteAdapter[] = [
   linkedinAdapter,
@@ -13,6 +14,7 @@ export const ADAPTERS: SiteAdapter[] = [
   greenhouseAdapter,
   leverAdapter,
   workdayAdapter,
+  ashbyAdapter,
 ];
 
 export function findAdapter(url: string): SiteAdapter | undefined {
