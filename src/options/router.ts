@@ -11,6 +11,11 @@ function parseHash(): Route {
 export function useRoute(): [Route, (r: Route) => void] {
   const [route, setRoute] = useState<Route>(parseHash());
   useEffect(() => {
+    if (location.hash === '' || location.hash === '#') {
+      location.hash = '#/profile';
+    }
+  }, []);
+  useEffect(() => {
     const onHash = () => setRoute(parseHash());
     window.addEventListener('hashchange', onHash);
     return () => window.removeEventListener('hashchange', onHash);

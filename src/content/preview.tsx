@@ -1,6 +1,7 @@
 import { createRoot, type Root } from 'react-dom/client';
 import { useMemo, useState } from 'react';
 import type { FieldMapping } from '@/features/autofill';
+import type { Profile } from '@/shared/schema/profile';
 
 // Inline design tokens — content scripts can't read popup/options CSS vars
 const T = {
@@ -29,14 +30,20 @@ function confColor(conf: number): string {
   return T.dim;
 }
 
+interface ProfileSummary {
+  experience: { company: string; title: string; dateRange: string }[];
+  education: { school: string; degree: string } | null;
+}
+
 interface PreviewProps {
   mappings: FieldMapping[];
   host: string;
+  profileSummary?: ProfileSummary;
   onConfirm: (selectedIndexes: Set<number>) => void;
   onCancel: () => void;
 }
 
-function PreviewDialog({ mappings, host, onConfirm, onCancel }: PreviewProps) {
+function PreviewDialog({ mappings, host, profileSummary, onConfirm, onCancel }: PreviewProps) {
   const fillable = useMemo(
     () => mappings.filter((m) => m.key !== 'unknown' && m.value),
     [mappings],
@@ -202,6 +209,47 @@ function PreviewDialog({ mappings, host, onConfirm, onCancel }: PreviewProps) {
           )}
         </div>
 
+        {/* Profile context: experience + education */}
+        {profileSummary && (profileSummary.experience.length > 0 || profileSummary.education) && (
+          <div style={{
+            padding: '12px 22px',
+            borderTop: `1px solid ${T.border}`,
+            background: T.surface2,
+          }}>
+            <div style={{
+              fontSize: 10, color: T.muted, fontFamily: T.fontMono,
+              textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 8,
+            }}>
+              Profile context
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+              {profileSummary.experience.slice(0, 2).map((exp, i) => (
+                <div key={i} style={{
+                  padding: '6px 10px', borderRadius: 8, border: `1px solid ${T.border}`,
+                  background: T.bg, fontSize: 12,
+                }}>
+                  <span style={{ fontWeight: 500, color: T.text }}>{exp.title}</span>
+                  <span style={{ color: T.muted }}> · {exp.company}</span>
+                  {exp.dateRange && (
+                    <span style={{ color: T.dim, fontSize: 11, marginLeft: 6 }}>{exp.dateRange}</span>
+                  )}
+                </div>
+              ))}
+              {profileSummary.education && (
+                <div style={{
+                  padding: '6px 10px', borderRadius: 8, border: `1px solid ${T.border}`,
+                  background: T.bg, fontSize: 12,
+                }}>
+                  <span style={{ fontWeight: 500, color: T.text }}>{profileSummary.education.school}</span>
+                  {profileSummary.education.degree && (
+                    <span style={{ color: T.muted }}> · {profileSummary.education.degree}</span>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
         {/* Footer */}
         <div style={{
           padding: '13px 22px', borderTop: `1px solid ${T.border}`,
@@ -249,19 +297,34 @@ function PreviewDialog({ mappings, host, onConfirm, onCancel }: PreviewProps) {
 let root: Root | null = null;
 let container: HTMLDivElement | null = null;
 
+function buildProfileSummary(profile: Profile): ProfileSummary {
+  const experience = profile.workExperience.map((exp) => {
+    const start = exp.startDate ?? '';
+    const end = exp.current ? 'Present' : (exp.endDate ?? '');
+    const dateRange = [start, end].filter(Boolean).join(' – ');
+    return { company: exp.company, title: exp.title, dateRange };
+  });
+  const lastEdu = profile.education[profile.education.length - 1];
+  const education = lastEdu ? { school: lastEdu.school, degree: lastEdu.degree ?? '' } : null;
+  return { experience, education };
+}
+
 export function openPreview(
   mappings: FieldMapping[],
   onConfirm: (selectedIndexes: Set<number>) => void,
+  profile?: Profile,
 ): void {
   close();
   container = document.createElement('div');
   container.className = 'rb-preview-root';
   document.body.appendChild(container);
   root = createRoot(container);
+  const profileSummary = profile ? buildProfileSummary(profile) : undefined;
   root.render(
     <PreviewDialog
       mappings={mappings}
       host={location.host}
+      profileSummary={profileSummary}
       onConfirm={(keys) => {
         close();
         onConfirm(keys);

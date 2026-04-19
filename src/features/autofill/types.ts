@@ -42,3 +42,17 @@ export interface FillResult {
   skipped: number;
   failed: number;
 }
+
+export interface JobMeta {
+  title: string;
+  company: string;
+  location: string;
+}
+
+export interface SiteAdapter {
+  name: string;
+  matches(url: string): boolean;
+  /** Return a modified copy of candidates with corrected label/name/id so identify() can match them. */
+  overrideFieldMap(fields: FieldCandidate[]): FieldCandidate[];
+  parseJob?(doc: Document): Partial<JobMeta>;
+}
