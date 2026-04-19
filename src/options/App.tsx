@@ -35,10 +35,7 @@ export function App() {
   return (
     <div className="flex h-full bg-rb-bg text-rb-text font-sans">
       {/* Sidebar */}
-      <aside
-        className="w-60 shrink-0 border-r border-rb-border flex flex-col"
-        style={{ background: 'hsl(220 14.29% 95.88%)' }}
-      >
+      <aside className="w-60 shrink-0 border-r border-rb-border flex flex-col bg-rb-surface2">
         {/* Logo */}
         <div className="flex items-center gap-2.5 px-[18px] pt-7 pb-5 border-b border-rb-border">
           <Logo size={26} color="hsl(var(--rb-text))" accent="hsl(var(--rb-accent))" />
