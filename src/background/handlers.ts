@@ -2,6 +2,7 @@ import { registerHandler } from '@/shared/messaging';
 import { ensureDefaultProfile, getActiveProfile, updateActiveProfile } from '@/features/profile';
 import { markApplied, autoMarkApplied, listApplications, toCsv } from '@/features/tracker';
 import { getSettings, updateSettings, addIgnorePattern } from '@/features/settings';
+import { listVariants, saveVariant, deleteVariant, resolveVariantForContext } from '@/features/variants';
 import { db } from '@/shared/storage/db';
 
 export function registerAllHandlers(): void {
@@ -45,6 +46,12 @@ export function registerAllHandlers(): void {
   registerHandler('settings/add-ignore-pattern', async ({ pattern }) => {
     return addIgnorePattern(pattern);
   });
+
+  registerHandler('variant/list', () => listVariants());
+  registerHandler('variant/save', ({ variant }) => saveVariant(variant));
+  registerHandler('variant/delete', ({ id }) => deleteVariant(id));
+  registerHandler('variant/resolve', ({ url, jobTitle, jdText }) =>
+    resolveVariantForContext(url, jobTitle, jdText));
 
   registerHandler('tracker/auto-apply', async ({ url, title, meta }) => {
     return autoMarkApplied(url, title, meta);

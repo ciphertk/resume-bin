@@ -2,6 +2,7 @@ import type { Profile } from '@/shared/schema/profile';
 import type { ApplicationRecord } from '@/shared/schema/application';
 import type { Settings } from '@/shared/schema/settings';
 import type { JobMeta } from '@/features/tracker/parseJobMeta';
+import type { Variant } from '@/shared/schema/variant';
 
 // --- message envelope ---
 
@@ -30,6 +31,11 @@ export type Message =
   | MessageEnvelope<'settings/get'>
   | MessageEnvelope<'settings/update', { patch: Partial<Settings> }>
   | MessageEnvelope<'settings/add-ignore-pattern', { pattern: string }>
+  // variants
+  | MessageEnvelope<'variant/list'>
+  | MessageEnvelope<'variant/save', { variant: Variant }>
+  | MessageEnvelope<'variant/delete', { id: string }>
+  | MessageEnvelope<'variant/resolve', { url: string; jobTitle?: string; jdText?: string }>
   // system
   | MessageEnvelope<'system/clear-all'>
   | MessageEnvelope<'system/active-tab-info'>;
@@ -54,6 +60,10 @@ export interface ResponseMap {
   'settings/get': Settings;
   'settings/update': Settings;
   'settings/add-ignore-pattern': Settings;
+  'variant/list': Variant[];
+  'variant/save': Variant;
+  'variant/delete': void;
+  'variant/resolve': Variant | null;
   'system/clear-all': { ok: true };
   'system/active-tab-info': TabInfo | null;
 }
