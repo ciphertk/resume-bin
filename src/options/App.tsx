@@ -6,12 +6,14 @@ import { Logo } from '@/shared/ui/Logo';
 import { ProfileEditor } from '@/features/profile/ui/ProfileEditor';
 import { ApplicationsView } from './views/ApplicationsView';
 import { SettingsView } from './views/SettingsView';
+import { VariantsView } from './views/VariantsView';
 
-type NavItem = { key: Route; label: string; icon: 'user' | 'briefcase' | 'gear' };
+type NavItem = { key: Route; label: string; icon: 'user' | 'briefcase' | 'gear' | 'sliders' };
 
 const NAV: NavItem[] = [
   { key: 'profile', label: 'Profile', icon: 'user' },
   { key: 'applications', label: 'Applications', icon: 'briefcase' },
+  { key: 'variants', label: 'Variants', icon: 'sliders' },
   { key: 'settings', label: 'Settings', icon: 'gear' },
 ];
 
@@ -118,6 +120,7 @@ export function App() {
       <main className="flex-1 p-9 overflow-auto">
         {route === 'profile' && <ProfileEditor />}
         {route === 'applications' && <ApplicationsView />}
+        {route === 'variants' && <VariantsView />}
         {route === 'settings' && <SettingsView />}
       </main>
     </div>
