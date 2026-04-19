@@ -10,7 +10,6 @@ export function SummarySection({
 }) {
   return (
     <section className="space-y-4">
-      <h2 className="text-lg font-semibold">Headline &amp; Summary</h2>
       <TextField
         label="Headline"
         value={profile.headline}

@@ -13,20 +13,19 @@ export function PreferencesSection({
 
   return (
     <section className="space-y-4">
-      <h2 className="text-lg font-semibold">Preferences</h2>
       <div className="grid grid-cols-2 gap-3">
         <TextField
           label="Work authorization"
           value={profile.workAuthorization ?? ''}
           onCommit={(v) => save({ workAuthorization: v })}
         />
-        <label className="flex items-center gap-2">
+        <label className="flex items-center gap-2 cursor-pointer">
           <input
             type="checkbox"
             checked={!!profile.willingToRelocate}
             onChange={(e) => void save({ willingToRelocate: e.target.checked })}
           />
-          <span className="text-sm">Willing to relocate</span>
+          <span className="text-sm text-rb-text">Willing to relocate</span>
         </label>
         <TextField
           label="Notice period (days)"

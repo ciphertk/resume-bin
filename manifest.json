@@ -3,18 +3,8 @@
   "name": "resume-bin",
   "description": "Autofill job applications across LinkedIn, Naukri, Wellfound and more",
   "version": "0.1.0",
-  "icons": {
-    "16": "public/icons/icon-16.png",
-    "32": "public/icons/icon-32.png",
-    "48": "public/icons/icon-48.png",
-    "128": "public/icons/icon-128.png"
-  },
   "action": {
-    "default_popup": "src/popup/index.html",
-    "default_icon": {
-      "16": "public/icons/icon-16.png",
-      "32": "public/icons/icon-32.png"
-    }
+    "default_popup": "src/popup/index.html"
   },
   "options_page": "src/options/index.html",
   "background": {

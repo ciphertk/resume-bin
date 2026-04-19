@@ -10,7 +10,6 @@ export function PersonalSection({
 }) {
   return (
     <section className="space-y-4">
-      <h2 className="text-lg font-semibold">Personal</h2>
       <div className="grid grid-cols-2 gap-3">
         <TextField
           label="First name"
