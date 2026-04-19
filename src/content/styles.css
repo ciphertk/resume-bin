@@ -1,105 +1,49 @@
 /* Scoped content-script styles. All classes are prefixed rb- to avoid collisions. */
+
+/* Floating pill trigger */
 .rb-pill {
   position: fixed;
-  right: 16px;
-  bottom: 16px;
+  right: 20px;
+  bottom: 20px;
   z-index: 2147483646;
-  background: #2563eb;
-  color: white;
-  font: 14px/1.2 system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
-  padding: 10px 14px;
+  background: hsl(21.75 65.64% 55.49%);
+  color: #fff;
+  font: 500 13px/1 'Geist Mono', ui-monospace, monospace;
+  padding: 10px 16px;
   border-radius: 999px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 1px 0 hsl(21.75 65% 48%) inset, 0 4px 14px hsl(21.75 65% 55% / 0.4);
   cursor: pointer;
   user-select: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  transition: opacity 0.15s;
+  letter-spacing: 0.01em;
+}
+.rb-pill::before {
+  content: '';
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M13 2L4 14h7l-1 8 9-12h-7l1-8z'/%3E%3C/svg%3E") center / contain no-repeat;
 }
 .rb-pill:hover {
-  background: #1d4ed8;
+  opacity: 0.9;
 }
 .rb-pill[hidden] {
   display: none;
 }
 
-.rb-preview-backdrop {
-  position: fixed;
-  inset: 0;
-  background: rgba(15, 23, 42, 0.55);
-  z-index: 2147483647;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.rb-preview-dialog {
-  background: white;
-  color: #0f172a;
-  font: 14px/1.35 system-ui, sans-serif;
-  border-radius: 12px;
-  width: min(560px, 92vw);
-  max-height: 80vh;
-  overflow: auto;
-  padding: 18px 20px;
-  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.35);
-}
-.rb-preview-dialog h2 {
-  margin: 0 0 8px 0;
-  font-size: 16px;
-  font-weight: 600;
-}
-.rb-preview-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 6px 0;
-  border-bottom: 1px solid #e2e8f0;
-}
-.rb-preview-row:last-child {
-  border-bottom: none;
-}
-.rb-preview-key {
-  font-weight: 600;
-  min-width: 140px;
-}
-.rb-preview-value {
-  color: #475569;
-  flex: 1;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.rb-preview-conf {
-  font-size: 12px;
-  color: #64748b;
-  min-width: 48px;
-  text-align: right;
-}
-.rb-preview-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 8px;
-  margin-top: 14px;
-}
-.rb-btn {
-  background: #2563eb;
-  color: white;
-  border: none;
-  padding: 8px 14px;
-  border-radius: 6px;
-  cursor: pointer;
-  font: inherit;
-}
-.rb-btn.rb-btn-secondary {
-  background: #e2e8f0;
-  color: #0f172a;
-}
+/* Field highlight outlines */
 .rb-field-hl-filled {
-  outline: 2px solid #22c55e !important;
+  outline: 2px solid hsl(180 17.59% 39%) !important;
   outline-offset: 2px !important;
 }
 .rb-field-hl-skipped {
-  outline: 2px solid #eab308 !important;
+  outline: 2px solid hsl(31.2 80% 62%) !important;
   outline-offset: 2px !important;
 }
 .rb-field-hl-failed {
-  outline: 2px solid #ef4444 !important;
+  outline: 2px solid hsl(0 72% 50%) !important;
   outline-offset: 2px !important;
 }

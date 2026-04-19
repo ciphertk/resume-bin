@@ -10,7 +10,6 @@ export function LinksSection({
 }) {
   return (
     <section className="space-y-4">
-      <h2 className="text-lg font-semibold">Links</h2>
       <div className="grid grid-cols-1 gap-3">
         <TextField
           label="LinkedIn URL"

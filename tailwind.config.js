@@ -5,13 +5,25 @@ export default {
   theme: {
     extend: {
       colors: {
-        brand: {
-          DEFAULT: '#2563eb',
-          dark: '#1d4ed8',
+        rb: {
+          bg:           'hsl(var(--rb-bg) / <alpha-value>)',
+          surface:      'hsl(var(--rb-surface) / <alpha-value>)',
+          surface2:     'hsl(var(--rb-surface2) / <alpha-value>)',
+          surface3:     'hsl(var(--rb-surface3) / <alpha-value>)',
+          border:       'hsl(var(--rb-border) / <alpha-value>)',
+          border2:      'hsl(var(--rb-border2) / <alpha-value>)',
+          text:         'hsl(var(--rb-text) / <alpha-value>)',
+          muted:        'hsl(var(--rb-muted) / <alpha-value>)',
+          dim:          'hsl(var(--rb-dim) / <alpha-value>)',
+          accent:       'hsl(var(--rb-accent) / <alpha-value>)',
+          'accent-soft':'hsl(var(--rb-accent-soft) / <alpha-value>)',
+          'accent-ink': 'hsl(var(--rb-accent-ink) / <alpha-value>)',
         },
       },
       fontFamily: {
-        sans: ['system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'sans-serif'],
+        sans:    ["'Geist Mono'", 'ui-monospace', 'monospace'],
+        mono:    ["'JetBrains Mono'", 'ui-monospace', 'monospace'],
+        display: ["'Instrument Serif'", 'Georgia', 'serif'],
       },
     },
   },

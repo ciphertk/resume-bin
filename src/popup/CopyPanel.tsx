@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import type { Profile } from '@/shared/schema/profile';
+import { Icon } from '@/shared/ui/Icon';
 
 export interface CopyField {
   key: string;
@@ -24,10 +25,10 @@ export function buildCopyFields(profile: Profile): CopyField[] {
     { key: 'portfolioUrl', label: 'Portfolio', value: profile.portfolioUrl },
     { key: 'websiteUrl', label: 'Website', value: profile.websiteUrl },
     { key: 'twitterUrl', label: 'Twitter', value: profile.twitterUrl },
-    { key: 'workAuthorization', label: 'Work authorization', value: profile.workAuthorization },
+    { key: 'workAuthorization', label: 'Work auth', value: profile.workAuthorization },
     {
       key: 'noticePeriodDays',
-      label: 'Notice period',
+      label: 'Notice',
       value: profile.noticePeriodDays !== undefined ? `${profile.noticePeriodDays} days` : undefined,
     },
     {
@@ -59,7 +60,7 @@ interface CopyPanelProps {
 }
 
 export function CopyPanel({ profile }: CopyPanelProps) {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(true);
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
 
   const fields = buildCopyFields(profile);
@@ -71,54 +72,67 @@ export function CopyPanel({ profile }: CopyPanelProps) {
       setCopiedKey(field.key);
       setTimeout(() => setCopiedKey((k) => (k === field.key ? null : k)), 1500);
     } catch {
-      // clipboard denied — no visible feedback
+      // clipboard denied
     }
   };
 
   return (
-    <div className="border-t border-slate-200 dark:border-slate-800 pt-2">
+    <div className="border-t border-rb-border pt-2">
+      {/* Toggle header */}
       <button
         type="button"
         aria-expanded={open}
-        className="w-full flex items-center justify-between text-sm text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white py-1"
+        className="w-full flex items-center justify-between py-2.5 bg-transparent border-none cursor-pointer text-rb-dim"
         onClick={() => setOpen((o) => !o)}
       >
-        <span>📋 Copy details</span>
-        <span className="text-xs">{open ? '∨' : '›'}</span>
+        <div className="flex items-center gap-2">
+          <Icon name="copy" size={14} />
+          <span className="text-xs font-medium">Quick copy</span>
+          <span
+            className="text-[10px] font-mono px-1.5 py-0.5 rounded"
+            style={{ background: 'hsl(var(--rb-surface3))', color: 'hsl(var(--rb-muted))' }}
+          >
+            {fields.length}
+          </span>
+        </div>
+        <Icon name={open ? 'chevD' : 'chev'} size={14} />
       </button>
 
       {open && (
-        <div className="mt-1 max-h-48 overflow-y-auto flex flex-col gap-px">
+        <div className="flex flex-col gap-0.5 mt-1">
           {fields.map((field) => {
             const copied = copiedKey === field.key;
             return (
-              <div
+              <button
                 key={field.key}
-                className={`flex items-center gap-1 px-1.5 py-1 rounded text-xs transition-colors ${
-                  copied
-                    ? 'bg-green-100 dark:bg-green-950'
-                    : 'hover:bg-slate-100 dark:hover:bg-slate-800'
-                }`}
+                type="button"
+                aria-label={copied ? `Copied ${field.label}` : `Copy ${field.label}`}
+                onClick={() => void copy(field)}
+                className="flex items-center gap-2.5 px-2.5 py-2 rounded-lg border-none cursor-pointer text-left transition-colors w-full"
+                style={{
+                  background: copied ? 'hsl(180 20% 92%)' : 'transparent',
+                }}
+                onMouseEnter={(e) => {
+                  if (!copied) e.currentTarget.style.background = 'hsl(var(--rb-surface3))';
+                }}
+                onMouseLeave={(e) => {
+                  if (!copied) e.currentTarget.style.background = 'transparent';
+                }}
               >
-                <span className="w-[72px] shrink-0 text-slate-400 dark:text-slate-500 truncate">
+                <span
+                  className="w-16 shrink-0 text-[10px] font-mono uppercase tracking-wide"
+                  style={{ color: 'hsl(var(--rb-muted))' }}
+                >
                   {field.label}
                 </span>
-                <span className="flex-1 text-slate-700 dark:text-slate-300 truncate">
-                  {field.value}
-                </span>
-                <button
-                  type="button"
-                  aria-label={copied ? `Copied ${field.label}` : `Copy ${field.label}`}
-                  onClick={() => void copy(field)}
-                  className={`shrink-0 px-1.5 py-0.5 rounded text-[10px] transition-colors ${
-                    copied
-                      ? 'bg-green-800 text-green-300'
-                      : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-slate-600'
-                  }`}
+                <span className="flex-1 text-xs text-rb-text truncate">{field.value}</span>
+                <span
+                  className="shrink-0 text-[10px] font-mono"
+                  style={{ color: copied ? 'hsl(180 17.59% 35%)' : 'hsl(var(--rb-muted))' }}
                 >
-                  {copied ? '✓' : 'Copy'}
-                </button>
-              </div>
+                  {copied ? '✓ copied' : 'copy'}
+                </span>
+              </button>
             );
           })}
         </div>

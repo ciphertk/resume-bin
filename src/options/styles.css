@@ -2,7 +2,41 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --rb-bg:          0 0% 100%;
+  --rb-surface:     0 0% 100%;
+  --rb-surface2:    220 14.29% 97.5%;
+  --rb-surface3:    0 0% 93.33%;
+  --rb-border:      220 13.04% 90.98%;
+  --rb-border2:     220 13.04% 85%;
+  --rb-text:        220.91 39.29% 10.98%;
+  --rb-muted:       220 8.94% 46.08%;
+  --rb-dim:         220.91 20% 30%;
+  --rb-accent:      21.75 65.64% 55.49%;
+  --rb-accent-soft: 22.3 85% 93%;
+  --rb-accent-ink:  21.75 65% 42%;
+}
+
+.dark {
+  --rb-bg:          270 5.56% 7.06%;
+  --rb-surface:     0 0% 9%;
+  --rb-surface2:    0 0% 13.33%;
+  --rb-surface3:    0 0% 20%;
+  --rb-border:      0 0% 13.33%;
+  --rb-border2:     0 0% 20%;
+  --rb-text:        0 0% 88%;
+  --rb-muted:       0 0% 53.33%;
+  --rb-dim:         0 0% 75.69%;
+  --rb-accent:      22.3 75.51% 61.57%;
+  --rb-accent-soft: 22.3 45% 18%;
+  --rb-accent-ink:  22.3 75% 68%;
+}
+
 html, body, #root {
   height: 100%;
   min-height: 100vh;
+  background: hsl(var(--rb-bg));
+  color: hsl(var(--rb-text));
+  font-family: 'Geist Mono', ui-monospace, monospace;
+  -webkit-font-smoothing: antialiased;
 }
