@@ -83,20 +83,58 @@
 
 ---
 
-## Phase 3 — Apply Detection 🔜 PLANNED
+## Phase 3 — Apply Detection ✅ SHIPPED
 
 Auto-detect form submissions, capture job metadata, eliminate manual "Mark Applied".
+
+### Apply detector
+- 3-signal detection: form submit, submit-button click, SPA URL change (pushState/popstate)
+- Debounced to prevent double-fire; respects ignored-site list
+- Fires after any one signal triggers
+
+### Job metadata parser
+- Priority chain: site adapter → JSON-LD `JobPosting` → `og:title`/`og:site_name` → `<h1>` fallback
+- JD text snapshot: largest matching `<div>`/`<section>` capped at 8000 chars
+
+### "Applied?" confirmation banner
+- Fixed bottom-right banner with 12-second countdown
+- "Yes, log it" → logs `ApplicationRecord` with `source: 'auto'`
+- "Not a job app" → adds hostname to ignore list, never triggers again
+- Auto-dismisses on timeout
+
+### Ignore list
+- `ignoredApplyPatterns[]` stored in settings (local IndexedDB)
+- Manageable in Settings → Ignored sites section
+
+### Auto-tracker enhancements
+- `ApplicationRecord` gains `source`, `jdText`, `detectedAt` fields
+- Deduplication by normalized URL
+- Applications view: `AUTO` badge, All/Manual/Auto-detected filter, expandable JD preview
 
 → See `docs/superpowers/plans/2026-04-19-resume-bin-phase-3.md`
 
 ---
 
-## Phase 4 — Variants 📋 BACKLOG
+## Phase 4 — Variants ✅ SHIPPED
 
-Profile variants (inherit/override fields), match rules by domain, auto-suggest in popup.
-Adapters: Workday, Ashby.
+### Profile variants
+- Create / edit / delete profile variants
+- Each variant overrides: headline, summary, skills (Phase 4); all fields (future)
+- Priority ordering — lowest number activates first
+- Managed from Options → Variants tab
 
-## Phase 5 — Saved-answer library 📋 BACKLOG
+### Variant auto-activation
+- Match rules: site hostnames, job-title keywords, JD keywords
+- Content script resolves active variant after apply detection fires
+- `buildMappings` merges variant overrides before field resolution
+
+### New site adapters
+- **Workday** — maps `data-automation-id` attributes (used by Amazon, Microsoft, etc.)
+- **Ashby** — maps `name` attributes + JSON-LD `JobPosting` metadata
+
+→ See `docs/superpowers/plans/2026-04-19-resume-bin-phase-4.md`
+
+## Phase 5 — Saved-answer library 📋 PLANNED
 
 Passively capture Q&A from application forms. Review queue. Reuse in future applications.
 
